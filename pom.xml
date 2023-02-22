@@ -36,6 +36,7 @@
         </license>
     </licenses>
 
+    <!--
     <scm>
         <url>https://github.com/MicroRaft/MicroRaft</url>
         <connection>scm:git:git@github.com:MicroRaft/MicroRaft</connection>
@@ -46,7 +47,7 @@
         <system>Github</system>
         <url>https://github.com/MicroRaft/MicroRaft/issues</url>
     </issueManagement>
-
+    -->
     <modules>
         <module>microraft</module>
         <module>microraft-hocon</module>
@@ -88,6 +89,8 @@
         <maven.install.plugin.version>3.1.0</maven.install.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -154,6 +157,7 @@
         </dependency>
     </dependencies>
 
+    <!--
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -164,6 +168,7 @@
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+    -->
 
     <build>
         <resources>
@@ -208,6 +213,7 @@
         </pluginManagement>
 
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -218,125 +224,129 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>${maven.surefire.plugin.version}</version>
+                            <configuration>
+                                <forkCount>2</forkCount>
+                                <reuseForks>false</reuseForks>
+                                <runOrder>random</runOrder>
+                                <argLine>
+                                    ${vmHeapSettings}
+                                    ${extraVmSettings}
+                                    -ea
+                                </argLine>
+                                <redirectTestOutputToFile>${redirect.test.output.to.file}</redirectTestOutputToFile>
+                            </configuration>
+                        </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <forkCount>2</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <runOrder>random</runOrder>
-                    <argLine>
-                        ${vmHeapSettings}
-                        ${extraVmSettings}
-                        -ea
-                    </argLine>
-                    <redirectTestOutputToFile>${redirect.test.output.to.file}</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-resources-plugin</artifactId>
+                            <version>${maven.resources.plugin.version}</version>
+                            <configuration>
+                                <encoding>UTF-8</encoding>
+                            </configuration>
+                        </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven.resources.plugin.version}</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>${maven.source.plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-sources</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>${maven.javadoc.plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-javadocs</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                            <configuration>
+                                <encoding>${project.build.sourceEncoding}</encoding>
+                                <source>${jdk.version}</source>
+                                <sourcepath>src/main/java</sourcepath>
+                                <excludePackageNames>io.microraft.model.*:*.impl:*.impl.*</excludePackageNames>
+                            </configuration>
+                        </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.javadoc.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>${jdk.version}</source>
-                    <sourcepath>src/main/java</sourcepath>
-                    <excludePackageNames>io.microraft.model.*:*.impl:*.impl.*</excludePackageNames>
-                </configuration>
-            </plugin>
+                        <plugin>
+                            <groupId>net.revelc.code.formatter</groupId>
+                            <artifactId>formatter-maven-plugin</artifactId>
+                            <version>${maven.formatter.plugin.version}</version>
+                            <configuration>
+                                <encoding>UTF-8</encoding>
+                                <compilerSource>${jdk.version}</compilerSource>
+                                <compilerTargetPlatform>${jdk.version}</compilerTargetPlatform>
+                                <configFile>${maven.multiModuleProjectDirectory}/tools/formatter.xml</configFile>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>format</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
 
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <version>${maven.formatter.plugin.version}</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <compilerSource>${jdk.version}</compilerSource>
-                    <compilerTargetPlatform>${jdk.version}</compilerTargetPlatform>
-                    <configFile>${maven.multiModuleProjectDirectory}/tools/formatter.xml</configFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                            <!-- <goal>validate</goal> -->
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-install-plugin</artifactId>
+                            <version>${maven.install.plugin.version}</version>
+                            <configuration>
+                                <createChecksum>true</createChecksum>
+                            </configuration>
+                        </plugin>
 
-            <plugin>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>${maven.install.plugin.version}</version>
-                <configuration>
-                    <createChecksum>true</createChecksum>
-                </configuration>
-            </plugin>
+                        <plugin>
+                            <groupId>org.sonatype.plugins</groupId>
+                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                            <version>${nexus.staging.maven.plugin.version}</version>
+                            <extensions>true</extensions>
+                            <configuration>
+                                <serverId>ossrh</serverId>
+                                <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            </configuration>
+                        </plugin>
 
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus.staging.maven.plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${maven.gpg.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>${maven.gpg.plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        -->
         </plugins>
+
     </build>
 
+
     <profiles>
+        <!--
         <profile>
             <id>spotbugs</id>
             <build>
@@ -454,6 +464,7 @@
                 <redirect.test.output.to.file>false</redirect.test.output.to.file>
             </properties>
         </profile>
+        -->
     </profiles>
 
 </project>
